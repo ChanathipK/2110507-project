@@ -3,10 +3,11 @@ import getHotels from "@/libs/getHotels";
 import { getServerSession } from "next-auth";
 import Link from "next/link";
 import { HotelList } from "../../../../interfaces";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export default async function Booking() {
 
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
 
 
     const isLoggedIn = (session != null);

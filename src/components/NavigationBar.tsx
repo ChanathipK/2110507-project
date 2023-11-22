@@ -29,7 +29,7 @@ export default function NavigationBar() {
 
     // Set Selecting Tab
     const pathname = usePathname();
-    const x = (pathname == "/"? 0: (pathname == "/booking"? 1: (pathname == "/about-us"? 2: -1)));
+    const x = (pathname == "/"? 0: (pathname == "/hotel"? 1: (pathname == "/about-us"? 2: -1)));
     const [selectingTab, setSelectingTab] = useState<number>(x);
     const selectingClass = " bg-slate-600 text-white hover:bg-slate-100 hover:text-black";
 
@@ -67,6 +67,15 @@ export default function NavigationBar() {
             }}
             >
                 Log out
+            </Link>
+            <Link
+            className="ms-8 flex justify-center items-center"
+            href="/booking"
+            onClick={() => {
+                setSelectingTab(-1);
+            }}
+            >
+                Booking
             </Link>
             {
                 (userRole == "admin") ?
