@@ -84,8 +84,8 @@ export default function BookingId({params,}: {params: {bookingid: string}}) {
                             "authorization": "Bearer " + userSession!.user.token,
                         },
                         body: JSON.stringify({
-                            bookingDate: startDate!.format("YYYY-MM-DD").toString(),
-                            checkoutDate: endDate!.format("YYYY-MM-DD").toString(),
+                            bookingDate: startDate!.format("YYYY-MM-DD"),
+                            checkoutDate: endDate!.format("YYYY-MM-DD"),
                             createdAt: dayjs().format("YYYY-MM-DD")
                         })
                     });
