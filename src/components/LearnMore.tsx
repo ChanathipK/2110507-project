@@ -1,7 +1,7 @@
 export default function LearnMore() {
     return (
-        <div className="h-[80vh] w-full px-8">
-            <div className="h-full w-full bg-slate-200 py-12 px-20 rounded-t-lg overflow-auto">
+        <div className="h-[90vh] w-full px-8 mb-8">
+            <div className="h-full w-full bg-slate-200 py-12 px-8 rounded-lg overflow-auto">
                 <h2 className="text-2xl text-center font-semibold">Why booking with us?</h2>
                 <div className="h-[440px] mt-8 flex justify-center items-center">
                     <div className="h-full rounded-xl bg-slate-500 w-1/3 min-w-[300px] ms-12 flex flex-col justify-center items-center px-8 text-slate-50 overflow-auto">

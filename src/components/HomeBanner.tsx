@@ -10,6 +10,8 @@ export default function HomeBanner() {
                 alt="Hotel"
                 className="object-cover w-full md:rounded-lg"
                 fill={true}
+                sizes="width:100%;height:100%"
+                priority
                 />
             </div>
         </div>
