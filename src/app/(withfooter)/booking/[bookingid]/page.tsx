@@ -41,6 +41,7 @@ export default function BookingId({params,}: {params: {bookingid: string}}) {
         if (!response.ok) {
             setUpdatePaneState(3);
         } else {
+
             const bookingData: Booking = (await response.json()).data;
 
             const listResponse = await fetch("http://localhost:5000/api/v1/bookings", {
@@ -49,9 +50,11 @@ export default function BookingId({params,}: {params: {bookingid: string}}) {
                 }
             });
 
+
             if (!listResponse.ok) {
                 setUpdatePaneState(3);
             } else {
+
                 const bookingList: BookingList = await listResponse.json();
 
                 let isUpdatable = true;
@@ -77,16 +80,23 @@ export default function BookingId({params,}: {params: {bookingid: string}}) {
                     }
                 }
 
+                console.log(startDate!.format("YYYY-MM-DD"));
+                console.log(typeof(startDate!.format("YYYY-MM-DD")));
+
+                console.log(endDate!.format("YYYY-MM-DD"))
+                console.log(typeof(endDate!.format("YYYY-MM-DD")))
+
                 if (isUpdatable) {
                     const updateResponse = await fetch("http://localhost:5000/api/v1/bookings/" + params.bookingid, {
                         method: "PUT",
                         headers: {
+                            "Content-Type": "application/json",
                             "authorization": "Bearer " + userSession!.user.token,
                         },
                         body: JSON.stringify({
                             bookingDate: startDate!.format("YYYY-MM-DD"),
                             checkoutDate: endDate!.format("YYYY-MM-DD"),
-                            createdAt: dayjs().format("YYYY-MM-DD")
+                            // createdAt: dayjs().format("YYYY-MM-DD")
                         })
                     });
 
@@ -97,6 +107,7 @@ export default function BookingId({params,}: {params: {bookingid: string}}) {
                         });
                         location.reload();
                     } else {
+                        console.log(await updateResponse.json());
                         setUpdatePaneState(2);
                         await new Promise((resolve) => {
                             setTimeout(resolve, 1000);
