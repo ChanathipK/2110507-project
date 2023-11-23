@@ -23,7 +23,7 @@ export default function BookingCard({hotelName, hotelAddress, hotelTel, hotelId,
             <p className="text-xs text-slate-50">Booking Date: {bookingDate}</p>
             <p className="text-xs text-slate-50">Checkout Date: {checkoutDate}</p>
             <p className="text-md text-slate-50 mt-2">From: {displayUserText}</p>
-            <Link href={"/booking/" + bookingId} className="w-full text-center mt-6 py-1 bg-slate-200 rounded-md duration-150 hover:bg-slate-700 hover:text-slate-50">Update Booking</Link>
+            <Link href={"/booking/" + bookingId + "/" + hotelId} className="w-full text-center mt-6 py-1 bg-slate-200 rounded-md duration-150 hover:bg-slate-700 hover:text-slate-50">Update Booking</Link>
             <button className="w-full text-center mt-2 py-1 bg-red-500 text-slate-50 rounded-md duration-150 hover:bg-red-700" onClick={(e) => {
                 e.preventDefault();
                 deleteBooking();

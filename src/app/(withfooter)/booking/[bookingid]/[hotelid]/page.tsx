@@ -10,9 +10,9 @@ import dayjs, { Dayjs } from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Booking, BookingList } from "../../../../../interfaces";
+import { Booking, BookingList } from "../../../../../../interfaces";
 
-export default function BookingId({params,}: {params: {bookingid: string}}) {
+export default function BookingId({params,}: {params: {bookingid: string, hotelid: string}}) {
 
     const {data: userSession, status} = useSession();
 
@@ -31,98 +31,79 @@ export default function BookingId({params,}: {params: {bookingid: string}}) {
     async function updateBooking() {
 
         setUpdatePaneState(1);
-
-        const response = await fetch("http://localhost:5000/api/v1/bookings/" + params.bookingid, {
+        const listResponse = await fetch("http://localhost:5000/api/v1/bookings", {
             headers: {
                 "authorization": "Bearer " + userSession!.user.token,
             }
         });
 
-        if (!response.ok) {
+
+        if (!listResponse.ok) {
             setUpdatePaneState(3);
         } else {
 
-            const bookingData: Booking = (await response.json()).data;
+            const bookingList: BookingList = await listResponse.json();
 
-            const listResponse = await fetch("http://localhost:5000/api/v1/bookings", {
-                headers: {
-                    "authorization": "Bearer " + userSession!.user.token,
-                }
-            });
+            let isUpdatable = true;
 
-
-            if (!listResponse.ok) {
-                setUpdatePaneState(3);
-            } else {
-
-                const bookingList: BookingList = await listResponse.json();
-
-                let isUpdatable = true;
-
-                for (let i = 0; i < bookingList.count; i++) {
-                    if (
-                        bookingData.hotel.name == bookingList.data[i].hotel.name && 
-                        bookingData.hotel._id == bookingList.data[i].hotel.id &&
-                        userSession?.user._id == bookingList.data[i].user._id &&
+            for (let i = 0; i < bookingList.count; i++) {
+                if (
+                    params.hotelid == bookingList.data[i].hotel.id &&
+                    userSession?.user._id == bookingList.data[i].user._id &&
+                    (
                         (
-                            (
-                                (startDate?.format("YYYY-MM-DD")!) <= bookingList.data[i].bookingDate.slice(0, 10) &&
-                                (endDate?.format("YYYY-MM-DD")!) >= bookingList.data[i].bookingDate.slice(0, 10)
-                            ) ||
-                            (
-                                (startDate?.format("YYYY-MM-DD")!) <= bookingList.data[i].checkoutDate.slice(0, 10) && 
-                                (endDate?.format("YYYY-MM-DD")!) >= bookingList.data[i].checkoutDate.slice(0, 10)
-                            )
+                            (startDate?.format("YYYY-MM-DD")!) <= bookingList.data[i].bookingDate.slice(0, 10) &&
+                            (endDate?.format("YYYY-MM-DD")!) >= bookingList.data[i].bookingDate.slice(0, 10)
+                        ) ||
+                        (
+                            (startDate?.format("YYYY-MM-DD")!) <= bookingList.data[i].checkoutDate.slice(0, 10) && 
+                            (endDate?.format("YYYY-MM-DD")!) >= bookingList.data[i].checkoutDate.slice(0, 10)
                         )
-                    ) {
-                        isUpdatable = false;
-                        break;
-                    }
-                }
-
-                console.log(startDate!.format("YYYY-MM-DD"));
-                console.log(typeof(startDate!.format("YYYY-MM-DD")));
-
-                console.log(endDate!.format("YYYY-MM-DD"))
-                console.log(typeof(endDate!.format("YYYY-MM-DD")))
-
-                if (isUpdatable) {
-                    const updateResponse = await fetch("http://localhost:5000/api/v1/bookings/" + params.bookingid, {
-                        method: "PUT",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "authorization": "Bearer " + userSession!.user.token,
-                        },
-                        body: JSON.stringify({
-                            bookingDate: startDate!.format("YYYY-MM-DD"),
-                            checkoutDate: endDate!.format("YYYY-MM-DD"),
-                            // createdAt: dayjs().format("YYYY-MM-DD")
-                        })
-                    });
-
-                    if (!updateResponse.ok) {
-                        setUpdatePaneState(3);
-                        await new Promise((resolve) => {
-                            setTimeout(resolve, 1000);
-                        });
-                        location.reload();
-                    } else {
-                        console.log(await updateResponse.json());
-                        setUpdatePaneState(2);
-                        await new Promise((resolve) => {
-                            setTimeout(resolve, 1000);
-                        });
-                        // router.push("/booking");
-                    }
-
-                } else {
-                    setUpdatePaneState(3);
-                    await new Promise((resolve) => {
-                        setTimeout(resolve, 100);
-                    });
+                    )
+                ) {
+                    isUpdatable = false;
+                    break;
                 }
             }
+
+            if (isUpdatable) {
+
+                const updateResponse = await fetch("http://localhost:5000/api/v1/bookings/" + params.bookingid, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "authorization": "Bearer " + userSession!.user.token,
+                    },
+                    body: JSON.stringify({
+                        bookingDate: startDate!.format("YYYY-MM-DD"),
+                        checkoutDate: endDate!.format("YYYY-MM-DD"),
+                        // createdAt: dayjs().format("YYYY-MM-DD")
+                    })
+                });
+
+                if (!updateResponse.ok) {
+                    setUpdatePaneState(3);
+                    await new Promise((resolve) => {
+                        setTimeout(resolve, 1000);
+                    });
+                    location.reload();
+                } else {
+                    console.log(await updateResponse.json());
+                    setUpdatePaneState(2);
+                    await new Promise((resolve) => {
+                        setTimeout(resolve, 1000);
+                    });
+                    // router.push("/booking");
+                }
+
+            } else {
+                setUpdatePaneState(3);
+                await new Promise((resolve) => {
+                    setTimeout(resolve, 100);
+                });
+            }
         }
+        
     }
 
     if (status == "unauthenticated" || status == "loading") {
